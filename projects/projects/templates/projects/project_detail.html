@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block container %}
+
+<div class="page-header">
+    <h1>{{ project }}</h1>
+</div>
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">{{ project }}</div>
+  <div class="panel-body">
+      <p>
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+  </div>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Component</th>
+            {% for layer in layers %}
+            <th>{{ layer }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for component in project.components %}
+        <tr>
+            <td>{{ component }} {{ component.latest_version.tag }}</td>
+            {% for layer in component.layers %}
+            <td>
+                {% if layer.items %}
+                    <div class="btn-group">
+                        <a role="button" class="btn btn-sm btn-success" href="{{ layer.items.0.url }}" title="{{ layer.items.0.version.tag }}">
+                            {% if layer.items.0.version == component.latest_version %}
+                                {{ layer.items.0.status }}
+                            {% else %}
+                                Out of date
+                            {% endif %}
+                        <a id="dropdownMenu{{ layer.items.0.pk }}" role="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="caret"></span></a>
+
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{ layer.items.0.pk }}">
+                            <li role="presentation" class="dropdown-header">{{ layer.items.0.version.tag }}</li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ layer.items.0.url }}"><span class="glyphicon glyphicon-eye-open"></span> View item</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add new version</a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li role="presentation" class="dropdown-header">Change status</li>
+                            {% for status in statuses %}
+                            <li{% if status == layer.items.0.status %} class="disabled"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="{% url "set_item_status" layer.items.0.pk status.pk %}">{{ status }}</a></li>
+                            {% endfor %}
+                            <li role="presentation" class="divider"></li>
+                            <li role="presentation" class="dropdown-header">Previous versions</li>
+                            {% for item in layer.items %}
+                            {% if not forloop.first %}
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ item.url }}">{{ item.version.tag }}</a></li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                <a class="btn btn-sm btn-default" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
