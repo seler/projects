@@ -2,6 +2,21 @@
 {% block container %}
 
 <h1>{{ project }}</h1>
+{% if management_access %}
+  <!-- Default panel contents -->
+<form action="{% url "component_create" project.slug %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        {{ component_form.project.as_hidden }}
+        <div class="input-group">
+            <span class="input-group-addon">New component name:</span>
+                {{ component_form.name }}
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span> Create</button>
+            </span>
+        </div><!-- /input-group -->
+    </form>
+{% endif %}
+<br>
 <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-body">
@@ -14,11 +29,14 @@
             {% for layer in layers %}
             <th>{{ layer }}</th>
             {% endfor %}
+            {% if management_access %}
+            <th>Delete</th>
+            {% endif %}
         </tr>
     </thead>
-    <tbody>
+    <tbody class="sortable">
         {% for component in project.components %}
-        <tr>
+        <tr data-pk="{{ component.pk }}" class="data">
             <td>{{ component }} {{ component.latest_version.tag }}</td>
             {% for layer in component.layers %}
             <td>
@@ -67,6 +85,11 @@
                 {% endif %}
             </td>
             {% endfor %}
+            {% if management_access %}
+            <td>
+                <a class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
         <tr>
@@ -77,17 +100,34 @@
     </tbody>
 </table>
 </div>
-{% if management_access %}
-<form action="{% url "component_create" project.slug %}" method="post" accept-charset="utf-8">
-        {% csrf_token %}
-        {{ component_form.project.as_hidden }}
-        <div class="input-group">
-            <span class="input-group-addon">New component name:</span>
-                {{ component_form.name }}
-                <span class="input-group-btn">
-                <button type="submit" class="btn btn-default" type="button">Create</button>
-            </span>
-        </div><!-- /input-group -->
-    </form>
-{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+$(function() {
+    var submit_order = function(){
+        data = {}
+        $('.sortable tr.data').each(function(index){
+            data[$(this).data('pk')] = index;
+        });
+        $.post("{% url "set_component_order" project.slug %}", JSON.stringify(data), function(data){
+            console.log(data);
+        }, 'json');
+    }
+    var timeout = null;
+    $('th, td', 'table tbody').each(function () {
+        var cell = $(this);
+        cell.width(cell.width());
+    });
+    $( ".sortable" ).sortable({
+        items: "tr.data",
+        axis: "y",
+        forceHelperSize: true,
+        forcePlaceholderSize: true,
+        stop: function( event, ui ) {
+            clearTimeout(timeout);
+            timeout = setTimeout(submit_order, 10 * 1000);
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -1,8 +1,11 @@
+import json
+
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
-from .forms import ItemForm, ComponentForm
+from .forms import ItemForm, ComponentForm, ComponentDeleteForm
 from .models import Project, Layer, Component, File, Status, Version, Item
 
 
@@ -29,8 +32,9 @@ class ProjectDetailView(DetailView):
 
 
 def new_tag(old_tag):
-    old_tag_split = old_tag.split(".")
-    tag = ".".join(old_tag_split[:-1] + [str(int(old_tag_split[-1]) + 1)])
+    old_tag_split = old_tag.split('.')
+    old_tag_split = old_tag_split[0].split('v') + old_tag_split[1:]
+    tag = "v" + ".".join(filter(None, old_tag_split[:-1] + [str(int(old_tag_split[-1]) + 1)]))
     return tag
 
 
@@ -75,7 +79,13 @@ def item_add(request, project_slug, component_pk, layer_pk):
             item.save()
             return HttpResponseRedirect(project.get_absolute_url())
     else:
-        form = ItemForm(initial={'version': tag})
+        url_qs = Item.objects.filter(version__component=component,
+                                     layer=layer)
+        if url_qs.exists():
+            url = url_qs[0].url
+        else:
+            url = ''
+        form = ItemForm(initial={'version': tag, 'url': url})
         form.fields['status'].choices = status_choices
 
     return render(request, 'projects/item_form.html', {'form': form})
@@ -118,3 +128,31 @@ def component_create(request, project_slug):
         form = ComponentForm(initial={'project': project})
 
     return render(request, 'projects/component_form.html', {'form': form})
+
+
+def component_delete(request, project_slug, component_pk):
+    project = Project.objects.get(slug=project_slug)
+    component = Component.objects.get(pk=component_pk)
+
+    if request.method == 'POST':
+        form = ComponentDeleteForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['component_pk'] == component.pk:
+                component.delete()
+                return HttpResponseRedirect(project.get_absolute_url())
+
+    form = ComponentDeleteForm(initial={'component_pk': component.pk})
+
+    return render(request, 'projects/delete_form.html', {'form': form})
+
+
+@csrf_exempt
+def set_component_order(request, project_slug):
+    project = Project.objects.get(slug=project_slug)
+    components = Component.objects.filter(project=project)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        for component in components:
+            component.order = data[str(component.pk)]
+            component.save()
+    return HttpResponse("OK")
