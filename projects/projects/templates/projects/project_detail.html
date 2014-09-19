@@ -110,6 +110,7 @@
 {% block scripts %}
 <script>
 $(function() {
+    {% if management_access %}
     var submit_order = function(){
         data = {}
         $('.sortable tr.data').each(function(index){
@@ -120,10 +121,6 @@ $(function() {
         }, 'json');
     }
     var timeout = null;
-    $('th, td', 'table.data').each(function () {
-        var cell = $(this);
-        cell.width(cell.width());
-    });
     $( ".sortable" ).sortable({
         items: "tr.data",
         axis: "y",
@@ -133,6 +130,11 @@ $(function() {
             clearTimeout(timeout);
             timeout = setTimeout(submit_order, 10 * 1000);
         }
+    });
+    {% endif %}
+    $('th, td', 'table.data').each(function () {
+        var cell = $(this);
+        cell.width(cell.width());
     });
 
     $('table.data thead').clone().appendTo('table.fixed');
