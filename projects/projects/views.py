@@ -16,6 +16,7 @@ class ProjectDetailView(DetailView):
                                                                   **kwargs)
         context['layers'] = Layer.objects.all()
         context['statuses'] = Status.objects.all()
+        context['management_access'] = self.request.user.is_superuser or self.object.managers.filter(pk=self.request.user.pk).exists()
 
         return context
 

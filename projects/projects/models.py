@@ -7,6 +7,8 @@ class Project(models.Model):
 
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
     slug = models.SlugField(verbose_name=_(u"slug"), unique=True)
+    managers = models.ManyToManyField('auth.User', verbose_name=_(u"managers"),
+                                      blank=True)
 
     class Meta:
         verbose_name = _(u"project")

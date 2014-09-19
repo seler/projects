@@ -31,6 +31,8 @@
                             {% else %}
                                 Out of date
                             {% endif %}
+                        </a>
+                        {% if management_access %}
                         <a id="dropdownMenu{{ current_item.pk }}" role="button" class="btn btn-sm btn-{% if current_item.up_to_date %}{{ layer.items.0.status.severity }}{% else %}danger{% endif %} dropdown-toggle" data-toggle="dropdown" href="#">
                         <span class="caret"></span></a>
 
@@ -55,10 +57,13 @@
                             {% endif %}
                             {% endfor %}
                         </ul>
+                        {% endif %}
                     </div>
                 {% endwith %}
                 {% else %}
+                        {% if management_access %}
                 <a class="btn btn-sm btn-default" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                {% endif %}
                 {% endif %}
             </td>
             {% endfor %}
@@ -72,6 +77,7 @@
     </tbody>
 </table>
 </div>
+                        {% if management_access %}
                 <form action="." method="post" accept-charset="utf-8">
                     {{ component_form }}
     <div class="input-group">
@@ -82,4 +88,5 @@
       </span>
     </div><!-- /input-group -->
                 </form>
+                {% endif %}
 {% endblock %}
