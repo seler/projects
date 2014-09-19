@@ -22,7 +22,7 @@
   <div class="panel-body">
       <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
   </div>
-<table class="table table-bordered table-striped">
+<table class="data table table-bordered table-striped">
     <thead>
         <tr>
             <th>Component</th>
@@ -30,7 +30,7 @@
             <th>{{ layer }}</th>
             {% endfor %}
             {% if management_access %}
-            <th>Delete</th>
+            <th>Optionsss</th>
             {% endif %}
         </tr>
     </thead>
@@ -87,7 +87,10 @@
             {% endfor %}
             {% if management_access %}
             <td>
-                <a class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                <div class="btn-group">
+                <a title="Delete" class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                <button title="Move" class="btn btn-sm btn-default"><span class="move glyphicon glyphicon-sort"></span> </button>
+                </div>
             </td>
             {% endif %}
         </tr>
@@ -100,7 +103,10 @@
     </tbody>
 </table>
 </div>
+<table class="fixed table table-bordered table-striped">
+</table>
 {% endblock %}
+
 {% block scripts %}
 <script>
 $(function() {
@@ -114,7 +120,7 @@ $(function() {
         }, 'json');
     }
     var timeout = null;
-    $('th, td', 'table tbody').each(function () {
+    $('th, td', 'table.data').each(function () {
         var cell = $(this);
         cell.width(cell.width());
     });
@@ -128,6 +134,37 @@ $(function() {
             timeout = setTimeout(submit_order, 10 * 1000);
         }
     });
+
+    $('table.data thead').clone().appendTo('table.fixed');
+    $('table.fixed').width($('table.data').width());
+    $('table.fixed').hide();
+    $(window).scroll(function() {
+        var elem = $("table.data thead");
+        var docViewTop = $(window).scrollTop();
+        var docViewBottom = docViewTop + $(window).height();
+
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop + $(elem).height();
+
+        var hide_fixed = ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        if(hide_fixed){
+            $('table.fixed').hide();
+        } else {
+            $('table.fixed').show();
+        }
+    });
 });
 </script>
+<style>
+table.fixed {
+    position: fixed;
+    top: 0;
+}
+table.fixed th {
+    border-bottom-width: 1px !important;
+}
+table tr {
+    background: white;
+}
+</style>
 {% endblock %}
