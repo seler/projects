@@ -2,7 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import ProjectListView, ProjectDetailView, item_add, set_item_status
+from .views import ProjectListView, ProjectDetailView, item_add, set_item_status, \
+    update_version
 
 
 urlpatterns = patterns(
@@ -10,6 +11,9 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^set-status/(?P<item_pk>\d+)/(?P<status_pk>\d+)/$',
         set_item_status, name='set_item_status'),
+    url(r'^update-version/(?P<version_pk>\d+)/'
+        r'(?P<item_pk>\d+)/(?P<status_pk>\d+)/$',
+        update_version, name='update_version'),
     url(r'^$', ProjectListView.as_view(), name='project_list'),
     url(r'^(?P<slug>[\w-]+)/$',
         ProjectDetailView.as_view(), name='project_detail'),

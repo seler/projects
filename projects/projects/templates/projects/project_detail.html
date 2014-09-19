@@ -1,19 +1,11 @@
 {% extends "base.html" %}
 {% block container %}
 
-<div class="page-header">
-    <h1>{{ project }}</h1>
-</div>
+<h1>{{ project }}</h1>
 <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading">{{ project }}</div>
   <div class="panel-body">
-      <p>
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-no sea takimata sanctus est Lorem ipsum dolor sit amet.
-      </p>
+      <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
   </div>
 <table class="table table-bordered table-striped">
     <thead>
@@ -31,24 +23,29 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
             {% for layer in component.layers %}
             <td>
                 {% if layer.items %}
+                {% with layer.items.0 as current_item %}
                     <div class="btn-group">
-                        <a role="button" class="btn btn-sm btn-success" href="{{ layer.items.0.url }}" title="{{ layer.items.0.version.tag }}">
-                            {% if layer.items.0.version == component.latest_version %}
-                                {{ layer.items.0.status }}
+                        <a role="button" class="btn btn-sm btn-{% if current_item.up_to_date %}{{ layer.items.0.status.severity }}{% else %}danger{% endif %}" href="{{ layer.items.0.url }}" title="{{ layer.items.0.version.tag }}">
+                            {% if current_item.up_to_date %}
+                                {{ current_item.status }}
                             {% else %}
                                 Out of date
                             {% endif %}
-                        <a id="dropdownMenu{{ layer.items.0.pk }}" role="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+                        <a id="dropdownMenu{{ current_item.pk }}" role="button" class="btn btn-sm btn-{% if current_item.up_to_date %}{{ layer.items.0.status.severity }}{% else %}danger{% endif %} dropdown-toggle" data-toggle="dropdown" href="#">
                         <span class="caret"></span></a>
 
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{ layer.items.0.pk }}">
-                            <li role="presentation" class="dropdown-header">{{ layer.items.0.version.tag }}</li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ layer.items.0.url }}"><span class="glyphicon glyphicon-eye-open"></span> View item</a></li>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{ current_item.pk }}">
+                            <li role="presentation" class="dropdown-header">{{ current_item.version.tag }}</li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ current_item.url }}"><span class="glyphicon glyphicon-eye-open"></span> View item</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add new version</a></li>
                             <li role="presentation" class="divider"></li>
                             <li role="presentation" class="dropdown-header">Change status</li>
                             {% for status in statuses %}
-                            <li{% if status == layer.items.0.status %} class="disabled"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="{% url "set_item_status" layer.items.0.pk status.pk %}">{{ status }}</a></li>
+                            {% if current_item.up_to_date %}
+                            <li{% if status == current_item.status %} class="disabled"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="{% url "set_item_status" current_item.pk status.pk %}">{{ status }}</a></li>
+                            {% else %}
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "update_version" component.latest_version.pk current_item.pk status.pk %}">{{ status }}</a></li>
+                            {% endif %}
                             {% endfor %}
                             <li role="presentation" class="divider"></li>
                             <li role="presentation" class="dropdown-header">Previous versions</li>
@@ -59,6 +56,7 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
                             {% endfor %}
                         </ul>
                     </div>
+                {% endwith %}
                 {% else %}
                 <a class="btn btn-sm btn-default" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add</a>
                 {% endif %}
@@ -66,7 +64,22 @@ no sea takimata sanctus est Lorem ipsum dolor sit amet.
             {% endfor %}
         </tr>
         {% endfor %}
+        <tr>
+            <td colspan="{{ layers|length|add:1 }}">
+      <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+            </td>
+        </tr>
     </tbody>
 </table>
 </div>
+                <form action="." method="post" accept-charset="utf-8">
+                    {{ component_form }}
+    <div class="input-group">
+        <span class="input-group-addon">New component name:</span>
+      <input type="text" class="form-control">
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default" type="button">Create</button>
+      </span>
+    </div><!-- /input-group -->
+                </form>
 {% endblock %}

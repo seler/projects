@@ -85,3 +85,17 @@ def set_item_status(request, item_pk, status_pk):
     item.save()
     return HttpResponseRedirect(
         item.version.component.project.get_absolute_url())
+
+
+def update_version(request, version_pk, item_pk, status_pk):
+    old_item = Item.objects.get(pk=item_pk)
+    status = Status.objects.get(pk=status_pk)
+    version = Version.objects.get(pk=version_pk)
+    item = Item()
+    item.layer = old_item.layer
+    item.url = old_item.url
+    item.version = version
+    item.status = status
+    item.save()
+    return HttpResponseRedirect(
+        item.version.component.project.get_absolute_url())

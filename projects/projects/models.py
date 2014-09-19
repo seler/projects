@@ -109,12 +109,35 @@ class Item(models.Model):
     def __unicode__(self):
         return "{} {}".format(self.layer, self.version)
 
+    def up_to_date(self):
+        if not hasattr(self, '_up_to_date'):
+            self._up_to_date = self.layer.items[0].version ==  \
+                self.version.component.latest_version
+        return self._up_to_date
+
 
 class Status(models.Model):
 
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
     order = models.PositiveSmallIntegerField(default=0,
                                              verbose_name=_(u"order"))
+    SEVERITY_DEFAULT = 'default'
+    SEVERITY_PRIMARY = 'primary'
+    SEVERITY_SUCCESS = 'success'
+    SEVERITY_INFO = 'info'
+    SEVERITY_WARNING = 'warning'
+    SEVERITY_DANGER = 'danger'
+    SEVERITY_CHOICES = (
+        (SEVERITY_DEFAULT, _("deffault")),
+        (SEVERITY_PRIMARY, _("primary")),
+        (SEVERITY_SUCCESS, _("success")),
+        (SEVERITY_INFO, _("info")),
+        (SEVERITY_WARNING, _("warning")),
+        (SEVERITY_DANGER, _("danger")),
+    )
+    severity = models.CharField(max_length=255, choices=SEVERITY_CHOICES,
+                                default=SEVERITY_DEFAULT,
+                                verbose_name=_(u"severity"))
 
     class Meta:
         verbose_name = _(u"status")
