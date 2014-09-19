@@ -1,4 +1,8 @@
 from django.views.generic import ListView, DetailView
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+
+from .forms import ItemForm, ComponentForm
 from .models import Project, Layer, Component, File, Status, Version, Item
 
 
@@ -16,14 +20,12 @@ class ProjectDetailView(DetailView):
                                                                   **kwargs)
         context['layers'] = Layer.objects.all()
         context['statuses'] = Status.objects.all()
-        context['management_access'] = self.request.user.is_superuser or self.object.managers.filter(pk=self.request.user.pk).exists()
+        context['management_access'] = self.request.user.is_superuser or \
+            self.object.managers.filter(pk=self.request.user.pk).exists()
+        context['component_form'] = ComponentForm(
+            initial={'project': self.object})
 
         return context
-
-
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from .forms import ItemForm
 
 
 def new_tag(old_tag):
@@ -100,3 +102,19 @@ def update_version(request, version_pk, item_pk, status_pk):
     item.save()
     return HttpResponseRedirect(
         item.version.component.project.get_absolute_url())
+
+
+def component_create(request, project_slug):
+    project = Project.objects.get(slug=project_slug)
+
+    if request.method == 'POST':
+        form = ComponentForm(request.POST, request.FILES)
+        if form.is_valid():
+            component = form.save(commit=False)
+            component.project = project
+            component.save()
+            return HttpResponseRedirect(project.get_absolute_url())
+    else:
+        form = ComponentForm(initial={'project': project})
+
+    return render(request, 'projects/component_form.html', {'form': form})

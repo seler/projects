@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import ProjectListView, ProjectDetailView, item_add, set_item_status, \
-    update_version
+    update_version, component_create
 
 
 urlpatterns = patterns(
@@ -17,8 +17,10 @@ urlpatterns = patterns(
     url(r'^$', ProjectListView.as_view(), name='project_list'),
     url(r'^(?P<slug>[\w-]+)/$',
         ProjectDetailView.as_view(), name='project_detail'),
-    url(r'^(?P<project_slug>[\w-]+)/(?P<component_pk>\d+)/(?P<layer_pk>\d+)/$',
+    url(r'^(?P<project_slug>[\w-]+)/add-item/(?P<component_pk>\d+)/(?P<layer_pk>\d+)/$',
         item_add, name='item_add'),
+    url(r'^(?P<project_slug>[\w-]+)/create-component/$',
+        component_create, name='component_create'),
 )
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -48,7 +48,7 @@ class Component(models.Model):
 
     project = models.ForeignKey('Project', verbose_name=_(u"project"))
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
-    order = models.PositiveSmallIntegerField(default=0,
+    order = models.PositiveSmallIntegerField(blank=True, default=None,
                                              verbose_name=_(u"order"))
 
     class Meta:
@@ -58,6 +58,11 @@ class Component(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.order is None and Component.objects.all().count():
+            self.order = Component.objects.all().order_by('-order')[0].order + 1
+        return super(Component, self).save(*args, **kwargs)
 
     @property
     def layers(self):
@@ -71,7 +76,10 @@ class Component(models.Model):
     @property
     def latest_version(self):
         if not hasattr(self, '_latest_version'):
-            self._latest_version = self.version_set.latest()
+            try:
+                self._latest_version = self.version_set.latest()
+            except Version.DoesNotExist:
+                self._latest_version = None
         return self._latest_version
 
 
