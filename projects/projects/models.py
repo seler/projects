@@ -48,7 +48,7 @@ class Component(models.Model):
 
     project = models.ForeignKey('Project', verbose_name=_(u"project"))
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
-    order = models.PositiveSmallIntegerField(blank=True, default=None,
+    order = models.PositiveSmallIntegerField(blank=True, default=0,
                                              verbose_name=_(u"order"))
 
     class Meta:
