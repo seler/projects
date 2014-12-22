@@ -48,7 +48,7 @@ class Component(models.Model):
 
     project = models.ForeignKey('Project', verbose_name=_(u"project"))
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
-    order = models.PositiveSmallIntegerField(blank=True, default=0,
+    order = models.PositiveSmallIntegerField(blank=True, default=None,
                                              verbose_name=_(u"order"))
 
     class Meta:
@@ -62,6 +62,8 @@ class Component(models.Model):
     def save(self, *args, **kwargs):
         if self.order is None and Component.objects.all().count():
             self.order = Component.objects.all().order_by('-order')[0].order + 1
+        elif self.order is None:
+            self.order = 0
         return super(Component, self).save(*args, **kwargs)
 
     @property
