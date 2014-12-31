@@ -1,5 +1,5 @@
 {% extends "projects/popup_form.html" %}
-{% block title %}Add new version{% endblock %}
+{% block title %}Add new version of {{ component }}{% endblock %}
 {% block action %}{% url "item_add" project.slug component.pk layer.pk %}{% endblock %}
 {% block after %}
     <script>
