@@ -4,8 +4,9 @@ from django.contrib import admin
 from .models import Component, File, Layer, Item, Project, Status, \
     Version
 
+from django_mptt_admin.admin import DjangoMpttAdmin
 
-class ComponentAdmin(admin.ModelAdmin):
+class ComponentAdmin(DjangoMpttAdmin):
     pass
 
 

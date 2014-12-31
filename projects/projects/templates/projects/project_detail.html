@@ -10,8 +10,13 @@
         <div class="input-group">
             <span class="input-group-addon">New component name:</span>
                 {{ component_form.name }}
+            </span>
+            <span class="input-group-addon">Last child of:</span>
+                {{ component_form.parent }}
                 <span class="input-group-btn">
-                    <button type="submit" class="btn btn-default" type="button"><span class="glyphicon glyphicon-plus"></span> Create</button>
+                    <button type="submit" class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-plus"></span> Create
+                    </button>
             </span>
         </div><!-- /input-group -->
     </form>
@@ -22,7 +27,7 @@
   <div class="panel-body">
       <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
   </div>
-<table class="data table table-bordered table-striped">
+<table id="components" class="data table table-bordered table-striped">
     <thead>
         <tr>
             <th>Component</th>
@@ -30,14 +35,14 @@
             <th>{{ layer }}</th>
             {% endfor %}
             {% if management_access %}
-            <th>Options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+            <th>Options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
             {% endif %}
         </tr>
     </thead>
-    <tbody class="sortable">
+    <tbody {#class="sortable"#}>
         {% for component in project.components %}
-        <tr data-pk="{{ component.pk }}" class="data" id="{{ component.anchor }}">
-            <td>{{ component }} {{ component.latest_version.tag }}</td>
+        <tr class="level-{{ component.level }}" data-parent="{{ component.parent.pk }}" data-level="{{ component.level }}" data-pk="{{ component.pk }}" class="data" id="{{ component.anchor }}">
+            <td>{{ component }} {{ component.latest_version.tag }}{% if component.has_children %}{% endif %}</td>
             {% for layer in component.layers %}
             <td>
                 {% if layer.items %}
@@ -89,6 +94,7 @@
             <td>
                 <div class="btn-group">
                 <a title="Notepad" class="btn btn-sm btn-default" href="{% url "component_notepad" project.slug component.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a title="Move" class="btn btn-sm btn-default" href="{% url "component_move" project.slug component.pk %}"><span class="glyphicon glyphicon-move"></span></a>
                 <a title="Delete" class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 </div>
             </td>

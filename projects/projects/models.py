@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 
 class Project(models.Model):
 
@@ -45,28 +47,19 @@ class Layer(models.Model):
         return self.name
 
 
-class Component(models.Model):
+class Component(MPTTModel):
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
     project = models.ForeignKey('Project', verbose_name=_(u"project"))
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
-    order = models.PositiveSmallIntegerField(blank=True, default=None,
-                                             verbose_name=_(u"order"))
     notepad = models.TextField(default='', verbose_name=_(u"notepad"))
 
     class Meta:
         verbose_name = _(u"component")
         verbose_name_plural = _(u"components")
-        ordering = ('order', )
 
     def __unicode__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if self.order is None and Component.objects.all().count():
-            self.order = Component.objects.all().order_by('-order')[0].order + 1
-        elif self.order is None:
-            self.order = 0
-        return super(Component, self).save(*args, **kwargs)
 
     @property
     def layers(self):
@@ -185,7 +178,6 @@ class File(models.Model):
     class Meta:
         verbose_name = _(u"file")
         verbose_name_plural = _(u"files")
-
 
     def __unicode__(self):
         return self.file.name

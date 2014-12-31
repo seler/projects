@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import ProjectListView, ProjectDetailView, item_add, set_item_status, \
     update_version, component_create, component_delete, set_component_order, \
-    component_notepad
+    component_notepad, component_move
 
 
 urlpatterns = patterns(
@@ -24,6 +24,8 @@ urlpatterns = patterns(
         component_delete, name='component_delete'),
     url(r'^(?P<project_slug>[\w-]+)/component/(?P<component_pk>\d+)/notepad/$',
         component_notepad, name='component_notepad'),
+    url(r'^(?P<project_slug>[\w-]+)/component/(?P<component_pk>\d+)/move/$',
+        component_move, name='component_move'),
     url(r'^(?P<project_slug>[\w-]+)/create-component/$',
         component_create, name='component_create'),
     url(r'^(?P<project_slug>[\w-]+)/set-order/$',

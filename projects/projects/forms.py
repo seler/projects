@@ -1,5 +1,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+
+from mptt.forms import MoveNodeForm
+
 from .models import Component
 
 
@@ -21,12 +24,16 @@ class ItemForm(forms.Form):
 class ComponentForm(forms.ModelForm):
     class Meta:
         model = Component
+        exclude = ('notepad',)
 
     def __init__(self, *args, **kwargs):
         super(ComponentForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['name'].widget.attrs['placeholder'] = "New component name"
         self.fields['name'].widget.attrs['autofocus'] = "autofocus"
+
+        self.fields['parent'].widget.attrs['class'] = 'form-control'
+        self.fields['parent'].widget.attrs['placeholder'] = "None"
 
 
 class ComponentDeleteForm(forms.Form):
@@ -35,3 +42,7 @@ class ComponentDeleteForm(forms.Form):
 
 class ComponentNotepadForm(forms.Form):
     notepad = forms.CharField(widget=forms.Textarea())
+
+
+class ComponentMoveForm(MoveNodeForm):
+    pass

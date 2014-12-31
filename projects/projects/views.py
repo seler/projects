@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .forms import ItemForm, ComponentForm, ComponentDeleteForm, ComponentNotepadForm
+from .forms import ItemForm, ComponentForm, ComponentDeleteForm, \
+    ComponentNotepadForm, ComponentMoveForm
 from .models import Project, Layer, Component, File, Status, Version, Item
 
 
@@ -170,5 +171,21 @@ def component_notepad(request, project_slug, component_pk):
             return HttpResponseRedirect(project.get_absolute_url())
 
     form = ComponentNotepadForm(initial={'notepad': component.notepad})
+    return render(request, 'projects/notepad_form.html',
+                  {'form': form, 'project': project, 'component': component})
+
+
+def component_move(request, project_slug, component_pk):
+    project = Project.objects.get(slug=project_slug)
+    component = Component.objects.get(pk=component_pk)
+    valid_targets = Component.objects.filter(project=project).exclude(pk=component_pk)
+
+    if request.method == 'POST':
+        form = ComponentMoveForm(component, request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(component.get_absolute_url())
+
+    form = ComponentMoveForm(component, valid_targets=valid_targets)
     return render(request, 'projects/notepad_form.html',
                   {'form': form, 'project': project, 'component': component})
