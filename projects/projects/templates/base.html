@@ -21,7 +21,8 @@
 #components td:first-child {
     line-height: 30px;
 }
-#components .level-0 {
+#components .level-0 td:first-child:before {
+    content: "";
 }
 #components .level-1 td:first-child:before {
     /*padding-left: 40px;*/
@@ -33,7 +34,23 @@
 }
 #components .level-3 td:first-child:before {
     /*padding-left: 120px;*/
-    content: "--------- ";
+    content: "------------ ";
+}
+#components .level-4 td:first-child:before {
+    /*padding-left: 120px;*/
+    content: "--------------- ";
+}
+#components .level-5 td:first-child:before {
+    /*padding-left: 120px;*/
+    content: "------------------ ";
+}
+#components .level-6 td:first-child:before {
+    /*padding-left: 120px;*/
+    content: "--------------------- ";
+}
+#components .level-7 td:first-child:before {
+    /*padding-left: 120px;*/
+    content: "------------------------ ";
 }
         </style>
 

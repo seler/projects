@@ -26,7 +26,7 @@ class ProjectDetailView(DetailView):
         context['statuses'] = Status.objects.all()
         context['management_access'] = self.request.user.is_superuser or \
             self.object.managers.filter(pk=self.request.user.pk).exists()
-        context['component_form'] = ComponentForm(
+        context['component_form'] = ComponentForm(project=self.object,
             initial={'project': self.object})
 
         return context
@@ -171,6 +171,7 @@ def component_notepad(request, project_slug, component_pk):
             return HttpResponseRedirect(project.get_absolute_url())
 
     form = ComponentNotepadForm(initial={'notepad': component.notepad})
+
     return render(request, 'projects/notepad_form.html',
                   {'form': form, 'project': project, 'component': component})
 
@@ -187,5 +188,6 @@ def component_move(request, project_slug, component_pk):
             return HttpResponseRedirect(component.get_absolute_url())
 
     form = ComponentMoveForm(component, valid_targets=valid_targets)
+
     return render(request, 'projects/notepad_form.html',
                   {'form': form, 'project': project, 'component': component})

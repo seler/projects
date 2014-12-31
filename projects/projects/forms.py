@@ -27,13 +27,17 @@ class ComponentForm(forms.ModelForm):
         exclude = ('notepad',)
 
     def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project', None)
         super(ComponentForm, self).__init__(*args, **kwargs)
+
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['name'].widget.attrs['placeholder'] = "New component name"
         self.fields['name'].widget.attrs['autofocus'] = "autofocus"
 
         self.fields['parent'].widget.attrs['class'] = 'form-control'
         self.fields['parent'].widget.attrs['placeholder'] = "None"
+        if project:
+            self.fields['parent'].queryset = self.fields['parent'].queryset.filter(project=project)
 
 
 class ComponentDeleteForm(forms.Form):
