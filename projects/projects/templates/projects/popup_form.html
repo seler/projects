@@ -6,8 +6,10 @@
 <form action="{% block action %}{% endblock %}" method="post" enctype="multipart/form-data" accept-charset="utf-8">
     {% csrf_token %}
     {{ form.as_p }}
+    <div class="form-buttons">
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-ok"></span> Ok</button>
         <button onclick="$.magnificPopup.close();" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+    </div>
 </form>
 {% block after %}
 {% endblock %}
