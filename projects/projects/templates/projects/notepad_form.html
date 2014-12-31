@@ -4,7 +4,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <script>
-        document.getElementById('id_url').select()
+        document.getElementById('id_notepad').focus()
     </script>
     <button type="submit" class="btn btn-default" type="button"><span class="glyphicon glyphicon-ok"></span> Save</button>
     <a href="{{ component.get_absolute_url }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span> Cancel</a>

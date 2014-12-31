@@ -31,3 +31,7 @@ class ComponentForm(forms.ModelForm):
 
 class ComponentDeleteForm(forms.Form):
     component_pk = forms.IntegerField(widget=forms.HiddenInput())
+
+
+class ComponentNotepadForm(forms.Form):
+    notepad = forms.CharField(widget=forms.Textarea())

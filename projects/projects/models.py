@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.template.defaultfilters import slugify
 
 
 class Project(models.Model):
@@ -50,6 +51,7 @@ class Component(models.Model):
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
     order = models.PositiveSmallIntegerField(blank=True, default=None,
                                              verbose_name=_(u"order"))
+    notepad = models.TextField(default='', verbose_name=_(u"notepad"))
 
     class Meta:
         verbose_name = _(u"component")
@@ -83,6 +85,13 @@ class Component(models.Model):
             except Version.DoesNotExist:
                 self._latest_version = None
         return self._latest_version
+
+    def get_absolute_url(self):
+        return u"{}#{}".format(self.project.get_absolute_url(), self.anchor)
+
+    @property
+    def anchor(self):
+        return "{}-{}".format(slugify(self.name), self.pk)
 
 
 class Version(models.Model):
@@ -176,6 +185,7 @@ class File(models.Model):
     class Meta:
         verbose_name = _(u"file")
         verbose_name_plural = _(u"files")
+
 
     def __unicode__(self):
         return self.file.name

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .forms import ItemForm, ComponentForm, ComponentDeleteForm
+from .forms import ItemForm, ComponentForm, ComponentDeleteForm, ComponentNotepadForm
 from .models import Project, Layer, Component, File, Status, Version, Item
 
 
@@ -156,3 +156,19 @@ def set_component_order(request, project_slug):
             component.order = data[str(component.pk)]
             component.save()
     return HttpResponse("OK")
+
+
+def component_notepad(request, project_slug, component_pk):
+    project = Project.objects.get(slug=project_slug)
+    component = Component.objects.get(pk=component_pk)
+
+    if request.method == 'POST':
+        form = ComponentNotepadForm(request.POST, request.FILES)
+        if form.is_valid():
+            component.notepad = form.cleaned_data['notepad']
+            component.save()
+            return HttpResponseRedirect(project.get_absolute_url())
+
+    form = ComponentNotepadForm(initial={'notepad': component.notepad})
+    return render(request, 'projects/notepad_form.html',
+                  {'form': form, 'project': project, 'component': component})

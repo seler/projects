@@ -30,13 +30,13 @@
             <th>{{ layer }}</th>
             {% endfor %}
             {% if management_access %}
-            <th>Optionsss</th>
+            <th>Options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
             {% endif %}
         </tr>
     </thead>
     <tbody class="sortable">
         {% for component in project.components %}
-        <tr data-pk="{{ component.pk }}" class="data">
+        <tr data-pk="{{ component.pk }}" class="data" id="{{ component.anchor }}">
             <td>{{ component }} {{ component.latest_version.tag }}</td>
             {% for layer in component.layers %}
             <td>
@@ -88,8 +88,8 @@
             {% if management_access %}
             <td>
                 <div class="btn-group">
+                <a title="Notepad" class="btn btn-sm btn-default" href="{% url "component_notepad" project.slug component.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
                 <a title="Delete" class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
-                <button title="Move" class="btn btn-sm btn-default"><span class="move glyphicon glyphicon-sort"></span> </button>
                 </div>
             </td>
             {% endif %}
