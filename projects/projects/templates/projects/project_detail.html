@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block container %}
 
 <h1>{{ project }}</h1>
@@ -62,7 +63,7 @@
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{ current_item.pk }}">
                             <li role="presentation" class="dropdown-header">{{ current_item.version.tag }}</li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ current_item.url }}"><span class="glyphicon glyphicon-eye-open"></span> View item</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add new version</a></li>
+                            <li role="presentation"><a class="popup" role="menuitem" tabindex="-1" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add new version</a></li>
                             <li role="presentation" class="divider"></li>
                             <li role="presentation" class="dropdown-header">Change status</li>
                             {% for status in statuses %}
@@ -85,7 +86,7 @@
                 {% endwith %}
                 {% else %}
                         {% if management_access %}
-                <a class="btn btn-sm btn-default" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                <a class="popup btn btn-sm btn-default" href="{% url "item_add" project.slug component.pk layer.pk %}"><span class="glyphicon glyphicon-plus"></span> Add</a>
                 {% endif %}
                 {% endif %}
             </td>
@@ -93,9 +94,9 @@
             {% if management_access %}
             <td>
                 <div class="btn-group">
-                <a title="Notepad" class="btn btn-sm btn-default" href="{% url "component_notepad" project.slug component.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a title="Move" class="btn btn-sm btn-default" href="{% url "component_move" project.slug component.pk %}"><span class="glyphicon glyphicon-move"></span></a>
-                <a title="Delete" class="btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                <a title="Notepad" class="popup btn btn-sm btn-default" href="{% url "component_notepad" project.slug component.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a title="Move" class="popup btn btn-sm btn-default" href="{% url "component_move" project.slug component.pk %}"><span class="glyphicon glyphicon-move"></span></a>
+                <a title="Delete" class="popup btn btn-sm btn-default" href="{% url "component_delete" project.slug component.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 </div>
             </td>
             {% endif %}
@@ -114,8 +115,18 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- Magnific Popup core CSS file -->
+<link rel="stylesheet" href="{% static "css/magnific-popup.css" %}"> 
+
+<!-- Magnific Popup core JS file -->
+<script src="{% static "js/jquery.magnific-popup.min.js" %}"></script>
+
 <script>
 $(function() {
+    $('#components').magnificPopup({
+        delegate: 'a.popup', // child items selector, by clicking on it popup will open
+        type: 'ajax'
+    });
     {% if management_access %}
     var submit_order = function(){
         data = {}
@@ -173,6 +184,17 @@ table.fixed th {
 }
 table tr {
     background: white;
+}
+.mfp-inline-holder .mfp-content, .mfp-ajax-holder .mfp-content {
+    width: 400px;
+    background: white;
+    padding: 20px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #999999;
+}
+.mfp-inline-holder .mfp-content form .btn-group, .mfp-ajax-holder .mfp-content form .btn-group {
+    float:right;
 }
 </style>
 {% endblock %}

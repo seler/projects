@@ -47,6 +47,14 @@ class ComponentDeleteForm(forms.Form):
 class ComponentNotepadForm(forms.Form):
     notepad = forms.CharField(widget=forms.Textarea())
 
+    def __init__(self, *args, **kwargs):
+        super(ComponentNotepadForm, self).__init__(*args, **kwargs)
+        self.fields['notepad'].widget.attrs['class'] = 'form-control'
+
 
 class ComponentMoveForm(MoveNodeForm):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        super(ComponentMoveForm, self).__init__(*args, **kwargs)
+        self.fields['target'].widget.attrs['class'] = 'form-control'
+        self.fields['position'].widget.attrs['class'] = 'form-control'

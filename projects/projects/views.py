@@ -89,7 +89,10 @@ def item_add(request, project_slug, component_pk, layer_pk):
         form = ItemForm(initial={'version': tag, 'url': url})
         form.fields['status'].choices = status_choices
 
-    return render(request, 'projects/item_form.html', {'form': form})
+    return render(request, 'projects/item_form.html', {'form': form,
+                                                       'project': project,
+                                                       'component': component,
+                                                       'layer': layer})
 
 
 def set_item_status(request, item_pk, status_pk):
@@ -144,7 +147,9 @@ def component_delete(request, project_slug, component_pk):
 
     form = ComponentDeleteForm(initial={'component_pk': component.pk})
 
-    return render(request, 'projects/delete_form.html', {'form': form})
+    return render(request, 'projects/delete_form.html', {'form': form,
+                                                         'project': project,
+                                                         'component': component})
 
 
 @csrf_exempt
@@ -189,5 +194,5 @@ def component_move(request, project_slug, component_pk):
 
     form = ComponentMoveForm(component, valid_targets=valid_targets)
 
-    return render(request, 'projects/notepad_form.html',
+    return render(request, 'projects/move_form.html',
                   {'form': form, 'project': project, 'component': component})
