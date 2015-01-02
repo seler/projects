@@ -1,13 +1,13 @@
 <div>
 {% block title_container %}
-<h4>{% block title %}Fill me in!{% endblock %}</h4>
+<h3>{% block title %}Fill me in!{% endblock %}</h3>
 {% endblock %}
 
 <form action="{% block action %}{% endblock %}" method="post" enctype="multipart/form-data" accept-charset="utf-8">
     {% csrf_token %}
     {{ form.as_p }}
     <div class="form-buttons">
-        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-ok"></span> Ok</button>
+        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Ok</button>
         <button onclick="$.magnificPopup.close();" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
     </div>
 </form>

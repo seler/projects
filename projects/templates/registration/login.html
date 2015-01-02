@@ -1,0 +1,76 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Login" %}{% endblock %}
+{% block content %}
+<style>
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+    margin-bottom: 10px;
+}
+.form-signin .checkbox {
+    font-weight: normal;
+}
+.form-signin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+</style>
+
+{% url 'auth_password_reset' as auth_pwd_reset_url %}
+{% url 'registration_register' as register_url%}
+
+<div class="container">
+    <form class="form-signin" method="post" action="{% url 'auth_login' %}">{% csrf_token %}
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                Please enter a correct username and password. Note that both fields may be case-sensitive.
+            </div>
+        {% endif %}
+        <label for="inputEmail" class="sr-only">
+            {% trans form.username.label_tag %}
+        </label>
+        <input name="username" type="text" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputPassword" class="sr-only">{% trans form.password.label_tag %}</label>
+        <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <p>
+            <a href="{{ auth_pwd_reset_url }}">Reset</a> password.
+            <a href="{{ register_url }}">Register</a> new account.
+        </p>
+        <input type="hidden" name="next" value="{{ next }}" />
+        <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Sign in" %}</button>
+    </form>
+
+</div> <!-- /container -->
+            
+            
+{% endblock %}
