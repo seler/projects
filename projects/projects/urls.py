@@ -10,6 +10,8 @@ from .views import ProjectListView, ProjectDetailView, item_add, set_item_status
 urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+
     url(r'^set-status/(?P<item_pk>\d+)/(?P<status_pk>\d+)/$',
         set_item_status, name='set_item_status'),
     url(r'^update-version/(?P<version_pk>\d+)/'
