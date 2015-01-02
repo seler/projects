@@ -22,6 +22,7 @@ class ItemForm(forms.Form):
 
 
 class ComponentForm(forms.ModelForm):
+
     class Meta:
         model = Component
         exclude = ('notepad',)
@@ -36,6 +37,7 @@ class ComponentForm(forms.ModelForm):
 
         self.fields['parent'].widget.attrs['class'] = 'form-control'
         self.fields['parent'].widget.attrs['placeholder'] = "None"
+        self.fields['parent'].widget.level_indicator = '&amp;nbsp;&amp;nbsp;'
         if project:
             self.fields['parent'].queryset = self.fields['parent'].queryset.filter(project=project)
 

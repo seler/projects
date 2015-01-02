@@ -1,4 +1,5 @@
 Django>=1.7
-django-mptt==0.6.1
+#django-mptt==0.6.1
+-e git+https://github.com/seler/django-mptt#egg=django-mptt
 django-mptt-admin==0.1.10
 django-registration-redux==1.1

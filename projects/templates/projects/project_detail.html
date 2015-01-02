@@ -43,7 +43,7 @@
     <tbody {#class="sortable"#}>
         {% for component in project.components %}
         <tr class="level-{{ component.level }}" data-parent="{{ component.parent.pk }}" data-level="{{ component.level }}" data-pk="{{ component.pk }}" class="data" id="{{ component.anchor }}">
-            <td>{{ component }} {{ component.latest_version.tag }}{% if component.has_children %}{% endif %}</td>
+            <td>{{ component.level_indicator }} {{ component }} {{ component.latest_version.tag }}{% if component.has_children %}{% endif %}</td>
             {% for layer in component.layers %}
             <td>
                 {% if layer.items %}

@@ -102,3 +102,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages'
 )
+
+MPTT_DEFAULT_LEVEL_INDICATOR = unichr(0x00A0) * 5

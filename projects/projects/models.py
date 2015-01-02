@@ -4,6 +4,16 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
+from mptt.forms import TreeNodeChoiceFieldMixin
+
+
+class LevelIndicatorHax(object):
+    def __init__(self, null, *args, **kwargs):
+        super(LevelIndicatorHax, self).__init__(*args, **kwargs)
+
+
+class LevelIndicator(TreeNodeChoiceFieldMixin, LevelIndicatorHax):
+    pass
 
 
 class Project(models.Model):
@@ -48,7 +58,8 @@ class Layer(models.Model):
 
 
 class Component(MPTTModel):
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', null=True, blank=True,
+                            related_name='children')
 
     project = models.ForeignKey('Project', verbose_name=_(u"project"))
     name = models.CharField(max_length=255, verbose_name=_(u"name"))
@@ -85,6 +96,10 @@ class Component(MPTTModel):
     @property
     def anchor(self):
         return "{}-{}".format(slugify(self.name), self.pk)
+
+    @property
+    def level_indicator(self):
+        return LevelIndicator(None)._get_level_indicator(self)
 
 
 class Version(models.Model):
